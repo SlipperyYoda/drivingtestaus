@@ -2,7 +2,6 @@
   "name": "drivingquiz",
   "version": "1.0.0",
   "description": "https://youtu.be/WIZ5kbeVMkM",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

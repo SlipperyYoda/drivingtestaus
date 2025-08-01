@@ -6,13 +6,13 @@ const REDVEHICLESPATHS = [];
 const BLUEVEHICLESPATHS = [];
 
 const yellowV1 = new Path();
-yellowV1.add(new Vector3(5.91, 0.3, 125.92));
-yellowV1.add(new Vector3(5.72, 0.3, 93.68));
+yellowV1.add(new Vector3(1.7, 0.3, 125.92));
+yellowV1.add(new Vector3(1.5, 0.3, 93.68));
 YELLOWVEHICLESPATHS.push(yellowV1);
 
 const yellowV2 = new Path();
-yellowV2.add(new Vector3(6.21, 0.3, 30.19));
-yellowV2.add(new Vector3(7.07, 0.3, 24.66));
+yellowV2.add(new Vector3(1.21, 0.3, 30.19));
+yellowV2.add(new Vector3(1.07, 0.3, 24.66));
 yellowV2.add(new Vector3(33.32, 0.3, 24.36));
 YELLOWVEHICLESPATHS.push(yellowV2);
 
@@ -48,15 +48,15 @@ YELLOWVEHICLESPATHS.push(yellowV7);
 //Red cars
 
 const redV1 = new Path();
-redV1.add(new Vector3(1.38, 0.3, 109.32));
-redV1.add(new Vector3(3.91, 0.3, 118.82));
-redV1.add(new Vector3(27.74, 0.3, 119.04));
+redV1.add(new Vector3(6.7, 0.3, 109.32));
+redV1.add(new Vector3(6.5, 0.3, 114.82));
+redV1.add(new Vector3(27.74, 0.3, 115.04));
 REDVEHICLESPATHS.push(redV1);
 
 const redV2 = new Path();
-redV2.add(new Vector3(1.13, 0.3, 14.01));
-redV2.add(new Vector3(3.70, 0.3, 22.64));
-redV2.add(new Vector3(26.53, 0.3, 24.73));
+redV2.add(new Vector3(6, 0.3, 14.01));
+redV2.add(new Vector3(6.7, 0.3, 22.64));
+redV2.add(new Vector3(21.53, 0.3, 24.73)); 
 REDVEHICLESPATHS.push(redV2);
 
 const redV3 = new Path();
@@ -90,13 +90,13 @@ REDVEHICLESPATHS.push(redV7);
 //Blue cars
 
 const blueV1 = new Path();
-blueV1.add(new Vector3(-3.55, 0.3, 119.5));
-blueV1.add(new Vector3(33.29, 0.3, 118.85));
+blueV1.add(new Vector3(-3.55, 0.3, 114.5));
+blueV1.add(new Vector3(33.29, 0.3, 114.85));
 BLUEVEHICLESPATHS.push(blueV1);
 
 const blueV2 = new Path();
-blueV2.add(new Vector3(-4.08, 0.3, 24.64));
-blueV2.add(new Vector3(39.31, 0.3, 24.53));
+blueV2.add(new Vector3(-4.08, 0.3, 20.64));
+blueV2.add(new Vector3(39.31, 0.3, 20.53));
 BLUEVEHICLESPATHS.push(blueV2);
 
 const blueV3 = new Path();

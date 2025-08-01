@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import * as YUKA from 'yuka';
 import gsap from 'gsap';
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader';
-import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils';
 import {
     YELLOWVEHICLESPATHS,
@@ -22,6 +22,7 @@ const loadingManager = new THREE.LoadingManager();
 
 const startButton = document.querySelector('.header button');
 const title = document.querySelector('.header h1');
+const subtitle = document.querySelector('.header h2');
 
 const explanation = document.querySelector('.explanation');
 const nextQuestionBtn = document.querySelector('.explanation button');
@@ -50,13 +51,13 @@ const blueCars = [];
 let carToAnimate = 0;
 
 const blinkGeo = new THREE.SphereGeometry(0.1);
-const blinkMat = new THREE.MeshBasicMaterial({color: 0xFF8300});
+const blinkMat = new THREE.MeshBasicMaterial({ color: 0xFF8300 });
 const blinkMesh = new THREE.Mesh(blinkGeo, blinkMat);
 
 const score = document.querySelector('.score span');
 let scoreVal = 0;
 
-const renderer = new THREE.WebGLRenderer({antialias: true});
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -88,21 +89,21 @@ scene.add(directionalLight);
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 
-loadingManager.onProgress = function(url, loaded, total) {
-    progressBar.value = (loaded/total) * 100;
+loadingManager.onProgress = function (url, loaded, total) {
+    progressBar.value = (loaded / total) * 100;
 }
 
-loadingManager.onLoad = function() {
+loadingManager.onLoad = function () {
     progressBarContainer.style.display = 'none';
 }
 
 const loader = new GLTFLoader(loadingManager);
 const dLoader = new DRACOLoader();
 dLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-dLoader.setDecoderConfig({type: 'js'});
+dLoader.setDecoderConfig({ type: 'js' });
 loader.setDRACOLoader(dLoader);
 
-loader.load('./assets/terrain.glb', function(glb) {
+loader.load('./assets/terrain.glb', function (glb) {
     const model = glb.scene;
     scene.add(model);
 });
@@ -121,7 +122,7 @@ function createBlinkingLight(group, positions) {
     group.add(bClone2);
 }
 
-function createCarV(model, path, entityManager, yRotation, blinkingLight) {
+function createVehicle(model, path, entityManager, yRotation, blinkingLight) {
     const group = new THREE.Group();
     scene.add(group);
     group.matrixAutoUpdate = false;
@@ -147,99 +148,104 @@ function createCarV(model, path, entityManager, yRotation, blinkingLight) {
 
     v.rotation.fromEuler(0, yRotation, 0);
 
-    if(blinkingLight)
+    if (blinkingLight)
         createBlinkingLight(group, blinkingLight);
 
-    const vehicleAll = {vehicle: v, modelGroup: car};
+    const vehicleAll = { vehicle: v, modelGroup: car };
     return vehicleAll;
 }
 
-loader.load('./assets/SUV.glb', function(glb) {
+loader.load('./assets/SUV.glb', function (glb) {
     const model = glb.scene;
-    const v1 = createCarV(model, YELLOWVEHICLESPATHS[0], entityManager, Math.PI);
-    const v2 = createCarV(model, YELLOWVEHICLESPATHS[1], entityManager, Math.PI, BLINKINGLIGHTS.yellow.right);
-    const v3 = createCarV(model, YELLOWVEHICLESPATHS[2], entityManager, Math.PI / 2, BLINKINGLIGHTS.yellow.left);
-    const v4 = createCarV(model, YELLOWVEHICLESPATHS[3], entityManager, Math.PI, BLINKINGLIGHTS.yellow.left);
-    const v5 = createCarV(model, YELLOWVEHICLESPATHS[4], entityManager, -Math.PI / 2, BLINKINGLIGHTS.yellow.right);
-    const v6 = createCarV(model, YELLOWVEHICLESPATHS[5], entityManager, Math.PI, BLINKINGLIGHTS.yellow.left);
-    const v7 = createCarV(model, YELLOWVEHICLESPATHS[6], entityManager, -Math.PI / 2);
+    const v1 = createVehicle(model, YELLOWVEHICLESPATHS[0], entityManager, Math.PI);
+    const v2 = createVehicle(model, YELLOWVEHICLESPATHS[1], entityManager, Math.PI, BLINKINGLIGHTS.yellow.right);
+    const v3 = createVehicle(model, YELLOWVEHICLESPATHS[2], entityManager, Math.PI / 2, BLINKINGLIGHTS.yellow.left);
+    const v4 = createVehicle(model, YELLOWVEHICLESPATHS[3], entityManager, Math.PI, BLINKINGLIGHTS.yellow.left);
+    const v5 = createVehicle(model, YELLOWVEHICLESPATHS[4], entityManager, -Math.PI / 2, BLINKINGLIGHTS.yellow.right);
+    const v6 = createVehicle(model, YELLOWVEHICLESPATHS[5], entityManager, Math.PI, BLINKINGLIGHTS.yellow.left);
+    const v7 = createVehicle(model, YELLOWVEHICLESPATHS[6], entityManager, -Math.PI / 2);
     yellowCars.push(v1, v2, v3, v4, v5, v6, v7);
 });
 
-loader.load('./assets/red.glb', function(glb) {
+loader.load('./assets/red.glb', function (glb) {
     const model = glb.scene;
-    const v1 = createCarV(model, REDVEHICLESPATHS[0], entityManager, 0, BLINKINGLIGHTS.red.left);
-    const v2 = createCarV(model, REDVEHICLESPATHS[1], entityManager, 0, BLINKINGLIGHTS.red.left);
-    const v3 = createCarV(model, REDVEHICLESPATHS[2], entityManager, -Math.PI / 2, BLINKINGLIGHTS.red.right);
-    const v4 = createCarV(model, REDVEHICLESPATHS[3], entityManager, 0);
-    const v5 = createCarV(model, REDVEHICLESPATHS[4], entityManager, Math.PI / 2, BLINKINGLIGHTS.red.left);
-    const v6 = createCarV(model, REDVEHICLESPATHS[5], entityManager, 0, BLINKINGLIGHTS.red.right);
-    const v7 = createCarV(model, REDVEHICLESPATHS[6], entityManager, Math.PI / 2);
+    const v1 = createVehicle(model, REDVEHICLESPATHS[0], entityManager, 0, BLINKINGLIGHTS.red.left);
+    const v2 = createVehicle(model, REDVEHICLESPATHS[1], entityManager, 0, BLINKINGLIGHTS.red.left);
+    const v3 = createVehicle(model, REDVEHICLESPATHS[2], entityManager, -Math.PI / 2, BLINKINGLIGHTS.red.right);
+    const v4 = createVehicle(model, REDVEHICLESPATHS[3], entityManager, 0);
+    const v5 = createVehicle(model, REDVEHICLESPATHS[4], entityManager, Math.PI / 2, BLINKINGLIGHTS.red.left);
+    const v6 = createVehicle(model, REDVEHICLESPATHS[5], entityManager, 0, BLINKINGLIGHTS.red.right);
+    const v7 = createVehicle(model, REDVEHICLESPATHS[6], entityManager, Math.PI / 2);
     redCars.push(v1, v2, v3, v4, v5, v6, v7);
 });
 
-loader.load('./assets/blue.glb', function(glb) {
+loader.load('./assets/blue.glb', function (glb) {
     const model = glb.scene;
-    const v1 = createCarV(model, BLUEVEHICLESPATHS[0], entityManager, Math.PI / 2);
-    const v2 = createCarV(model, BLUEVEHICLESPATHS[1], entityManager, Math.PI / 2);
-    const v3 = createCarV(model, BLUEVEHICLESPATHS[2], entityManager, 0);
-    const v4 = createCarV(model, BLUEVEHICLESPATHS[3], entityManager, Math.PI / 2, BLINKINGLIGHTS.blue.left);
-    const v7 = createCarV(model, BLUEVEHICLESPATHS[4], entityManager, Math.PI);
+    const v1 = createVehicle(model, BLUEVEHICLESPATHS[0], entityManager, Math.PI / 2);
+    const v2 = createVehicle(model, BLUEVEHICLESPATHS[1], entityManager, Math.PI / 2);
+    const v3 = createVehicle(model, BLUEVEHICLESPATHS[2], entityManager, 0);
+    const v4 = createVehicle(model, BLUEVEHICLESPATHS[3], entityManager, Math.PI / 2, BLINKINGLIGHTS.blue.left);
+    const v7 = createVehicle(model, BLUEVEHICLESPATHS[4], entityManager, Math.PI);
     blueCars.push(v1, v2, v3, v4, v7);
 });
 
-startButton.addEventListener('mousedown', function() {
+startButton.addEventListener('mousedown', function () {
     const tl = gsap.timeline();
     tl.to(startButton, {
         autoAlpha: 0,
         y: '-=20',
         duration: 0.5
     })
-    .to(title, {
-        autoAlpha: 0,
-        y: '-=20',
-        duration: 1
-    }, 0)
-    .to(camera.position, {
-        z: 144,
-        duration: 4
-    }, 0)
-    .to(camera.rotation, {
-        x: -0.4,
-        duration: 4
-    }, 0)
-    .to(question, {
-        autoAlpha: 1,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].question.play();
-        }
-    }, '+=0.7')
-    .to(option1, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].answer1.play();
-        }
-    }, '+=2.5')
-    .to(option2, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].answer2.play();
-        }
-    }, '+=2.4')
-    .to(option3, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].answer3.play();
-            clicked = false;
-        }
-    }, '+=2.4')
+        .to(title, {
+            autoAlpha: 0,
+            y: '-=20',
+            duration: 1
+        }, 0)
+        .to(subtitle, {
+            autoAlpha: 0,
+            y: '-=20',
+            duration: 1
+        }, 0)
+        .to(camera.position, {
+            z: 144,
+            duration: 4
+        }, 0)
+        .to(camera.rotation, {
+            x: -0.4,
+            duration: 4
+        }, 0)
+        .to(question, {
+            autoAlpha: 1,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].question.play();
+            }
+        }, '+=0.7')
+        .to(option1, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].answer1.play();
+            }
+        }, '+=2.5')
+        .to(option2, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].answer2.play();
+            }
+        }, '+=2.4')
+        .to(option3, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].answer3.play();
+                clicked = false;
+            }
+        }, '+=2.4')
 });
 
-loader.load('./assets/arrow.glb', function(glb) {
+loader.load('./assets/arrow.glb', function (glb) {
     const model = glb.scene;
 
     function createArrow(position, yRotation = 0) {
@@ -249,7 +255,7 @@ loader.load('./assets/arrow.glb', function(glb) {
         scene.add(arrow);
     }
 
-    createArrow(new THREE.Vector3(5.91, 2, 125.92), Math.PI);
+    createArrow(new THREE.Vector3(1.7, 2, 125.92), Math.PI);
     createArrow(new THREE.Vector3(6.21, 2, 30.19), 0.5 * Math.PI);
     createArrow(new THREE.Vector3(93.03, 2, 24.50), Math.PI);
     createArrow(new THREE.Vector3(102.50, 2, -66), -0.5 * Math.PI);
@@ -258,7 +264,7 @@ loader.load('./assets/arrow.glb', function(glb) {
     createArrow(new THREE.Vector3(-82.82, 2, -171.17), -Math.PI / 2);
 
     //Arrows for red cars
-    createArrow(new THREE.Vector3(1.38, 2, 109.32), 0.5 * Math.PI);
+    createArrow(new THREE.Vector3(6.7, 2, 109.32), 0.5 * Math.PI);
     createArrow(new THREE.Vector3(1.13, 2, 14.01), 0.5 * Math.PI);
     createArrow(new THREE.Vector3(107.50, 2, 20.33), Math.PI);
     createArrow(new THREE.Vector3(97.45, 2, -81.35));
@@ -281,7 +287,7 @@ function showAnswerSymbol(opt1, opt2, opt3) {
 }
 
 function animateCar(delay, car, wheels, last) {
-    setTimeout(function() {
+    setTimeout(function () {
         car.vehicle.steering.behaviors[1].active = true;
 
         gsap.to(car.modelGroup.getObjectByName(wheels.frontRight).rotation, {
@@ -297,20 +303,20 @@ function animateCar(delay, car, wheels, last) {
             duration: 20
         });
 
-        if(last)
+        if (last)
             carToAnimate++;
     }, delay);
 }
 
 function chooseAnswer(option) {
-    if(!clicked) {
+    if (!clicked) {
         switch (carToAnimate) {
             case 0:
                 showAnswerSymbol('correct', 'incorrect', 'incorrect');
                 animateCar(3000, yellowCars[carToAnimate], WHEELS.yellowCar);
                 animateCar(5000, redCars[carToAnimate], WHEELS.redCar, true);
                 animateCar(0, blueCars[carToAnimate], WHEELS.blueCar);
-                if(option.id === 'option1') {
+                if (option.id === 'option1') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -320,7 +326,7 @@ function chooseAnswer(option) {
                 animateCar(3000, yellowCars[carToAnimate], WHEELS.yellowCar);
                 animateCar(5000, redCars[carToAnimate], WHEELS.redCar, true);
                 animateCar(0, blueCars[carToAnimate], WHEELS.blueCar);
-                if(option.id === 'option1') {
+                if (option.id === 'option1') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -330,7 +336,7 @@ function chooseAnswer(option) {
                 animateCar(3000, yellowCars[carToAnimate], WHEELS.yellowCar);
                 animateCar(0, redCars[carToAnimate], WHEELS.redCar);
                 animateCar(5000, blueCars[carToAnimate], WHEELS.blueCar, true);
-                if(option.id === 'option3') {
+                if (option.id === 'option3') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -340,7 +346,7 @@ function chooseAnswer(option) {
                 animateCar(5000, yellowCars[carToAnimate], WHEELS.yellowCar, true);
                 animateCar(3000, redCars[carToAnimate], WHEELS.redCar);
                 animateCar(0, blueCars[carToAnimate], WHEELS.blueCar);
-                if(option.id === 'option1') {
+                if (option.id === 'option1') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -350,7 +356,7 @@ function chooseAnswer(option) {
                 animateCar(0, yellowCars[carToAnimate], WHEELS.yellowCar);
                 animateCar(3000, redCars[carToAnimate], WHEELS.redCar, true);
                 //animateCar(0, blueCars[carToAnimate], null);
-                if(option.id === 'option2') {
+                if (option.id === 'option2') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -360,7 +366,7 @@ function chooseAnswer(option) {
                 animateCar(3000, yellowCars[carToAnimate], WHEELS.yellowCar, true);
                 animateCar(0, redCars[carToAnimate], WHEELS.redCar);
                 //animateCar(0, blueCars[carToAnimate], null);
-                if(option.id === 'option1') {
+                if (option.id === 'option1') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -370,7 +376,7 @@ function chooseAnswer(option) {
                 animateCar(3000, yellowCars[carToAnimate], WHEELS.yellowCar, true);
                 animateCar(3000, redCars[carToAnimate], WHEELS.redCar);
                 animateCar(0, blueCars[carToAnimate - 2], WHEELS.blueCar);
-                if(option.id === 'option2') {
+                if (option.id === 'option2') {
                     scoreVal++;
                     score.innerText = scoreVal;
                 }
@@ -378,7 +384,7 @@ function chooseAnswer(option) {
             default:
                 break;
         }
-        
+
         option.style.backgroundColor = 'white';
         option.style.color = 'black';
 
@@ -415,8 +421,30 @@ function changeOptionsText(qtion, opt1, opt2, opt3) {
     option3Text.textContent = opt3;
 }
 
-nextQuestionBtn.addEventListener('click', function() {
+const explanations = {
+    1: "Explanation for question 1: Aleisha sucks",
+    2: "Explanation for question 2: Ligma Balls",
+    3: "Explanation for question 3: Phasellus semper, ligula in aliquam placerat, dui velit suscipit lacus.",
+    4: "Explanation for question 4: Eu tincidunt magna urna vitae ligula.",
+    5: "Explanation for question 5: Pellentesque vitae risus faucibus, accumsan tortor in, cursus nisi.",
+    6: "Explanation for question 6: Quisque fermentum ligula non viverra commodo.",
+    7: "Explanation for question 7: Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+};
+
+const explanationText = document.getElementById("explanation-text");
+const nextButton = document.getElementById("next-question");
+
+function updateExplanation() {
+    explanationText.textContent = explanations[questionNumber] || "No explanation available.";
+}
+
+explanationText.textContent = explanations[questionNumber];
+
+
+nextQuestionBtn.addEventListener('click', function () {
     questionNumber++;
+
+    updateExplanation();
 
     switch (questionNumber) {
         case 2:
@@ -449,71 +477,71 @@ nextQuestionBtn.addEventListener('click', function() {
         z: cameraZ,
         duration: 4
     })
-    .to(question, {
-        autoAlpha: 0,
-        duration: 0.2
-    }, 0)
-    .to(explanation, {
-        autoAlpha: 0,
-        y: '+=10',
-        duration: 0.5
-    }, 0)
-    .to(option1, {
-        rotateX: 90,
-        duration: 0.2
-    }, '-=3.7')
-    .to(option2, {
-        rotateX: 90,
-        duration: 0.2
-    }, '-=3.5')
-    .to(option3, {
-        rotateX: 90,
-        duration: 0.2,
-        onComplete: function() {
-            changeColors();
-            changeOptionsText(
-                ANSWERSTEXT[questionNumber - 1].question,
-                ANSWERSTEXT[questionNumber - 1].answer1,
-                ANSWERSTEXT[questionNumber - 1].answer2,
-                ANSWERSTEXT[questionNumber - 1].answer3
-            );
-        }
-    }, '-=3.3')
-    .to(question, {
-        autoAlpha: 1,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].question.play();
-        }
-    }, '-=0.5')
-    .to(option1, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].answer1.play();
-        }
-    }, '+=2.5')
-    .to(option2, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            AUDIOS[questionNumber - 1].answer2.play();
-        }
-    }, '+=2.4')
-    .to(option3, {
-        rotateX: 0,
-        duration: 0.2,
-        onComplete: function() {
-            clicked = false;
-            AUDIOS[questionNumber - 1].answer3.play();
-        }
-    }, '+=2.4')
+        .to(question, {
+            autoAlpha: 0,
+            duration: 0.2
+        }, 0)
+        .to(explanation, {
+            autoAlpha: 0,
+            y: '+=10',
+            duration: 0.5
+        }, 0)
+        .to(option1, {
+            rotateX: 90,
+            duration: 0.2
+        }, '-=3.7')
+        .to(option2, {
+            rotateX: 90,
+            duration: 0.2
+        }, '-=3.5')
+        .to(option3, {
+            rotateX: 90,
+            duration: 0.2,
+            onComplete: function () {
+                changeColors();
+                changeOptionsText(
+                    ANSWERSTEXT[questionNumber - 1].question,
+                    ANSWERSTEXT[questionNumber - 1].answer1,
+                    ANSWERSTEXT[questionNumber - 1].answer2,
+                    ANSWERSTEXT[questionNumber - 1].answer3
+                );
+            }
+        }, '-=3.3')
+        .to(question, {
+            autoAlpha: 1,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].question.play();
+            }
+        }, '-=0.5')
+        .to(option1, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].answer1.play();
+            }
+        }, '+=2.5')
+        .to(option2, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                AUDIOS[questionNumber - 1].answer2.play();
+            }
+        }, '+=2.4')
+        .to(option3, {
+            rotateX: 0,
+            duration: 0.2,
+            onComplete: function () {
+                clicked = false;
+                AUDIOS[questionNumber - 1].answer3.play();
+            }
+        }, '+=2.4')
 });
 
 const time = new YUKA.Time();
 
 function animate(t) {
-    if(Math.sin(t / 130) > 0)
+    if (Math.sin(t / 130) > 0)
         blinkMesh.material.color.setHex(0xDC2F02);
     else
         blinkMesh.material.color.setHex(0xFF8300);
@@ -525,7 +553,7 @@ function animate(t) {
 
 renderer.setAnimationLoop(animate);
 
-window.addEventListener('resize', function() {
+window.addEventListener('resize', function () {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
